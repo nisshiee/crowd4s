@@ -8,6 +8,8 @@ scalaVersion := "2.10.0"
 
 libraryDependencies := Seq(
    "org.scalaz" %% "scalaz-core" % "7.0.0-M7"
+  ,"net.databinder.dispatch" %% "dispatch-core" % "0.9.5"
+  ,"org.json4s" %% "json4s-jackson" % "3.1.0"
   ,"org.specs2" %% "specs2" % "1.13" % "test"
   ,"org.mockito" % "mockito-all" % "1.9.0" % "test"
   ,"junit" % "junit" % "4.10" % "test"
@@ -19,12 +21,12 @@ testOptions in (Test, test) += Tests.Argument("console", "html", "junitxml")
 initialCommands := """
 import scalaz._
 import Scalaz._
-import scalax.io._
-import scalax.file._
-import ImplicitConversions._
-import org.scala_tools.time.Imports._
+import org.nisshiee.crowd4s._
 """
 
+cleanupCommands := """
+dispatch.Http.shutdown
+"""
 
 // ========== for sonatype oss publish ==========
 

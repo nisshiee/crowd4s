@@ -3,6 +3,7 @@ package org.nisshiee.crowd4s
 import dispatch._
 import com.ning.http.client.Response
 import scalaz._, Scalaz._
+import scala.util.control.Exception.allCatch
 
 object CrowdHttp {
 
@@ -11,8 +12,8 @@ object CrowdHttp {
       (_ as (conn.appname, conn.password)) |>
       (_ <<? params)
 
-    Http(req > { res: Response =>
+    allCatch opt { Http(req > { res: Response =>
       (res.getStatusCode, res.getResponseBody)
-    })()
+    })() } toSuccess ConnectionError
   }
 }

@@ -7,5 +7,4 @@ case class User (
   ,displayName: String
   ,email: String
   ,active: Boolean
-  ,attributes: List[String]
 )
