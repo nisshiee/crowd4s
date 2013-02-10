@@ -10,6 +10,7 @@ libraryDependencies := Seq(
    "org.scalaz" %% "scalaz-core" % "7.0.0-M7"
   ,"net.databinder.dispatch" %% "dispatch-core" % "0.9.5"
   ,"org.json4s" %% "json4s-jackson" % "3.1.0"
+  ,"com.typesafe" % "config" % "1.0.0"
   ,"org.specs2" %% "specs2" % "1.13" % "test"
   ,"org.mockito" % "mockito-all" % "1.9.0" % "test"
   ,"junit" % "junit" % "4.10" % "test"
