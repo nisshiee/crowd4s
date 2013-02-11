@@ -6,7 +6,7 @@ import org.json4s.jackson.JsonMethods._
 import org.json4s.FieldSerializer._
 import scala.util.control.Exception.allCatch
 
-object CrowdErrorUtil {
+object ResponseParseHelper {
 
   def parseNotFound[A](json: String): Validation[RequestError, A] = {
     implicit val formats = DefaultFormats

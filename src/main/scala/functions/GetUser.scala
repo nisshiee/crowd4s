@@ -15,7 +15,7 @@ trait GetUser {
 
 object GetUser {
 
-  import CrowdErrorUtil._
+  import ResponseParseHelper._
 
   val path = "/rest/usermanagement/1/user.json"
 

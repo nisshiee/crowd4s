@@ -15,7 +15,7 @@ trait GetGroup {
 
 object GetGroup {
 
-  import CrowdErrorUtil._
+  import ResponseParseHelper._
 
   val path = "/rest/usermanagement/1/group.json"
 
