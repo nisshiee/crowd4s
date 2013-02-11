@@ -9,12 +9,10 @@ trait Authorize {
 
   import Authorize._
 
-  def authorize(
-     username: String
-    ,password: Password
-    ,authorizedGroups: Seq[String]
-  )(implicit conn: CrowdConnection) =
-    Crowd.authenticate(username, password) flatMap checkAuthenticationResult(authorizedGroups)
+  def authorize
+    (username: String, password: Password)
+    (implicit authorizedGroups: Seq[String], conn: CrowdConnection) =
+      Crowd.authenticate(username, password) flatMap checkAuthenticationResult(authorizedGroups)
 }
 
 object Authorize {
