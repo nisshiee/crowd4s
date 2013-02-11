@@ -19,13 +19,7 @@ object GetUser {
 
   val path = "/rest/usermanagement/1/user.json"
 
-  def parseResponse: ((Int, String)) => Validation[RequestError, User] = {
-    case (200, json) => parseUser(json)
-    case (401, _) => Unauthorized.failure
-    case (403, _) => Forbidden.failure
-    case (404, json) => parseNotFound(json)
-    case _ => UnknownError.failure
-  }
+  def parseResponse = parseBasicGetResponse(parseUser)
 
   val camelize: PartialFunction[JField, JField] = {
     case JField("first-name", v) => JField("firstName", v)
