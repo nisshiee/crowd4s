@@ -4,5 +4,4 @@ case class Group (
    name: String
   ,description: String
   ,active: Boolean
-  ,attributes: List[String]
 )
