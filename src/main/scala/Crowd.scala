@@ -5,3 +5,4 @@ object Crowd
   with GetGroup
   with Authenticate
   with GetGroupList
+  with Authorize
