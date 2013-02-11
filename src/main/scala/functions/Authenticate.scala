@@ -16,6 +16,8 @@ trait Authenticate {
 
 object Authenticate {
 
+  import ResponseParseHelper._
+
   val path = "/rest/usermanagement/1/authentication.json"
 
   def toJson(pass: Password): JValue = {
@@ -29,22 +31,6 @@ object Authenticate {
     case (401, _) => Unauthorized.failure
     case (403, _) => Forbidden.failure
     case _ => UnknownError.failure
-  }
-
-
-  val camelize: PartialFunction[JField, JField] = {
-    case JField("first-name", v) => JField("firstName", v)
-    case JField("last-name", v) => JField("lastName", v)
-    case JField("display-name", v) => JField("displayName", v)
-  }
-
-  def parseUser(json: String): Validation[JsonParseError, User] = {
-    implicit val formats = DefaultFormats
-    allCatch opt {
-      parse(json)
-        .transformField(camelize)
-        .extract[User]
-    } toSuccess JsonParseError
   }
 
   def parseFailure(json: String): Validation[JsonParseError, AuthenticationResult] = {
