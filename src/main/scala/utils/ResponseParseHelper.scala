@@ -24,4 +24,19 @@ object ResponseParseHelper {
     case (404, json) => parseNotFound(json)
     case _ => UnknownError.failure
   }
+
+  val camelizeUser: PartialFunction[JField, JField] = {
+    case JField("first-name", v) => JField("firstName", v)
+    case JField("last-name", v) => JField("lastName", v)
+    case JField("display-name", v) => JField("displayName", v)
+  }
+
+  def parseUser(json: String): Validation[JsonParseError, User] = {
+    implicit val formats = DefaultFormats
+    allCatch opt {
+      parse(json)
+        .transformField(camelizeUser)
+        .extract[User]
+    } toSuccess JsonParseError
+  }
 }
