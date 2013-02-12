@@ -25,17 +25,20 @@ object Authorize {
   def checkAuthenticationResult
       (authorized: Seq[String])
       (res: AuthenticationResult)
-      (implicit conn: CrowdConnection) = res match {
-        case AtSuccess(u) => searchAuthorizedGroup(authorized)(u)
+      (implicit conn: CrowdConnection)
+      : Validation[CrowdError, AuthorizationResult] = res match {
+        case AtSuccess(u) => Crowd.getDirectGroupList(u.name) flatMap { belonged =>
+          searchAuthorizedGroup(authorized, belonged)(u)
+        }
         case e: AtFailure => AAFailure(e).success
       }
 
   def searchAuthorizedGroup
-      (authorized: Seq[String])
+      (authorized: Seq[String], belonged: Seq[String])
       (user: User)
       (implicit conn: CrowdConnection)
       : Validation[CrowdError, AuthorizationResult] =
-        authorized.toStream map checkActive collectFirst {
+        authorized.toStream filter (belonged contains _) map checkActive collectFirst {
           case Success(Some(g)) => ArSuccess(user, g).success
           case Failure(e) => e.failure
         } getOrElse ArFailure(user).success
