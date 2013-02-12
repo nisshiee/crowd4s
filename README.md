@@ -9,8 +9,14 @@ about
 crowd4s is atlassian crowd API wrapper for Scala.
 
 
-hot to use
+how to use
 ----------------------------------------
+
+### sbt dependency
+
+```
+libraryDependencies += "org.nisshiee" %% "crowd4s" % "1.0.1"
+```
 
 ### config
 
