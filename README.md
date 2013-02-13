@@ -15,7 +15,7 @@ how to use
 ### sbt dependency
 
 ```
-libraryDependencies += "org.nisshiee" %% "crowd4s" % "1.0.1"
+libraryDependencies += "org.nisshiee" %% "crowd4s" % "1.1.0-SNAPSHOT"
 ```
 
 ### config

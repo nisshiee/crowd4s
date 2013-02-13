@@ -2,7 +2,7 @@ name := "crowd4s"
 
 organization := "org.nisshiee"
 
-version := "1.0.1"
+version := "1.1.0-SNAPSHOT"
 
 scalaVersion := "2.10.0"
 
