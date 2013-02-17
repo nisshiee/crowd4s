@@ -9,9 +9,11 @@ trait Authenticate {
 
   import Authenticate._
 
-  def authenticate(username: String, password: Password)(implicit conn: CrowdConnection) =
-    CrowdHttp.postJson(path, Map("username" -> username), toJson(password))
-      .flatMap(parseResponse)
+  def authenticate
+    (username: String, password: Password)
+    (implicit conn: CrowdConnection, http: CrowdHttp) =
+      http.postJson(path, Map("username" -> username), toJson(password))
+        .flatMap(parseResponse)
 }
 
 object Authenticate {

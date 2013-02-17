@@ -11,7 +11,7 @@ trait Authorize {
 
   def authorize
     (username: String, password: Password)
-    (implicit authorizedGroups: Seq[String], conn: CrowdConnection) =
+    (implicit authorizedGroups: Seq[String], conn: CrowdConnection, http: CrowdHttp) =
       Crowd.authenticate(username, password) flatMap checkAuthenticationResult(authorizedGroups)
 }
 
@@ -25,7 +25,7 @@ object Authorize {
   def checkAuthenticationResult
       (authorized: Seq[String])
       (res: AuthenticationResult)
-      (implicit conn: CrowdConnection)
+      (implicit conn: CrowdConnection, http: CrowdHttp)
       : Validation[CrowdError, AuthorizationResult] = res match {
         case AtSuccess(u) => Crowd.getDirectGroupList(u.name) flatMap { belonged =>
           searchAuthorizedGroup(authorized, belonged)(u)
@@ -36,13 +36,13 @@ object Authorize {
   def searchAuthorizedGroup
       (authorized: Seq[String], belonged: Seq[String])
       (user: User)
-      (implicit conn: CrowdConnection)
+      (implicit conn: CrowdConnection, http: CrowdHttp)
       : Validation[CrowdError, AuthorizationResult] =
         authorized.toStream filter (belonged contains _) map checkActive collectFirst {
           case Success(Some(g)) => ArSuccess(user, g).success
           case Failure(e) => e.failure
         } getOrElse ArFailure(user).success
 
-  def checkActive(groupname: String)(implicit conn: CrowdConnection) =
+  def checkActive(groupname: String)(implicit conn: CrowdConnection, http: CrowdHttp) =
     Crowd.getGroup(groupname) map { g => g.active option g }
 }

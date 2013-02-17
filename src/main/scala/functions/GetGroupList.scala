@@ -9,11 +9,11 @@ trait GetGroupList {
 
   import GetGroupList._
 
-  def getDirectGroupList(username: String)(implicit conn: CrowdConnection) =
-    CrowdHttp.get(directPath, Map("username" -> username)) flatMap parseResponse
+  def getDirectGroupList(username: String)(implicit conn: CrowdConnection, http: CrowdHttp) =
+    http.get(directPath, Map("username" -> username)) flatMap parseResponse
 
-  def getNestedGroupList(username: String)(implicit conn: CrowdConnection) =
-    CrowdHttp.get(nestedPath, Map("username" -> username)) flatMap parseResponse
+  def getNestedGroupList(username: String)(implicit conn: CrowdConnection,  http: CrowdHttp) =
+    http.get(nestedPath, Map("username" -> username)) flatMap parseResponse
 }
 
 object GetGroupList {

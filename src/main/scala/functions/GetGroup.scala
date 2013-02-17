@@ -9,8 +9,8 @@ trait GetGroup {
 
   import GetGroup._
 
-  def getGroup(groupname: String)(implicit conn: CrowdConnection) =
-    CrowdHttp.get(path, Map("groupname" -> groupname)) flatMap parseResponse
+  def getGroup(groupname: String)(implicit conn: CrowdConnection, http: CrowdHttp) =
+    http.get(path, Map("groupname" -> groupname)) flatMap parseResponse
 }
 
 object GetGroup {

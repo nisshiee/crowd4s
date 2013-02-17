@@ -9,8 +9,8 @@ trait GetUser {
 
   import GetUser._
 
-  def getUser(username: String)(implicit conn: CrowdConnection) =
-    CrowdHttp.get(path, Map("username" -> username)) flatMap parseResponse
+  def getUser(username: String)(implicit conn: CrowdConnection, http: CrowdHttp) =
+    http.get(path, Map("username" -> username)) flatMap parseResponse
 }
 
 object GetUser {
