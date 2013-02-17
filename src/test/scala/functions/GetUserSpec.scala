@@ -9,6 +9,10 @@ class GetUserSpec extends Specification with DataTables { def is =
     "parseResponse"                                                             ^
       "known status code"                                                       ! e1^
       "unknown status code"                                                     ! e2^
+                                                                                p^
+    "getUser"                                                                   ^
+      "if user exists"                                                          ! e3^
+      "if user doesn't exist"                                                   ! e4^
                                                                                 end
 
   import GetUser._
@@ -47,4 +51,21 @@ class GetUserSpec extends Specification with DataTables { def is =
     503          ! UnknownError.failure |> { (code, result) =>
       parseResponse(code -> "hoge") must equalTo(result)
     }
+
+  def e3 = {
+    import NormalTestEnv._
+    implicit val c = case01
+    Crowd.getUser("user01") must equalTo {
+      User("user01", "01", "User", "User01", "user01@example.net", true).success
+    }
+  }
+
+  def e4 = {
+    import NormalTestEnv._
+    implicit val c = case01
+    Crowd.getUser("userZZ").toEither must beLeft.like {
+      case NotFound(_, _) => ok
+      case _ => ko
+    }
+  }
 }

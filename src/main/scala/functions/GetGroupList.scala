@@ -27,8 +27,18 @@ object GetGroupList {
 
   def parseGroupList(json: String): Validation[JsonParseError, Seq[String]] = {
     implicit val formats = DefaultFormats
+    type JsonVld[A] = Validation[JsonParseError, A]
+    implicit val semigroup = Semigroup.firstSemigroup[JsonParseError]
     allCatch opt {
-      parse(json) \ "groups" \ "name" |> (_.extract[List[String]])
-    } toSuccess JsonParseError
+      parse(json) \ "groups" match {
+        case JArray(l) => (l map parseGroupAst).sequence[JsonVld, String]
+        case _ => JsonParseError.failure
+      }
+    } getOrElse JsonParseError.failure
+  }
+
+  def parseGroupAst(ast: JValue): Validation[JsonParseError, String] = ast \ "name" match {
+    case JString(s) => s.success
+    case _ => JsonParseError.failure
   }
 }

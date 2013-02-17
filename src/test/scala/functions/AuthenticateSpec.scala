@@ -11,10 +11,18 @@ class AuthenticateSpec extends Specification with DataTables { def is =
       "valid json is parsed to Success(Failure)"                                ! e1^
       "invalid json is parsed to Failure(JsonParseError)"                       ! e2^
                                                                                 p^
-    "toJson"                                                                    ! e3^
+    "toJson"                                                                    ^
+      "valid case"                                                              ! e3^
+                                                                                p^
     "parseResponse"                                                             ^
       "known status code"                                                       ! e4^
       "unknown status code"                                                     ! e5^
+                                                                                p^
+    "authenticate"                                                              ^
+      "if user doesn't exist"                                                   ! e6^
+      "if password is invalid"                                                  ! e7^
+      "if valid authentication"                                                 ! e8^
+      "if valid authentication but user is nonactive"                           ! e9^
                                                                                 end
 
   import Authenticate._
@@ -65,4 +73,40 @@ class AuthenticateSpec extends Specification with DataTables { def is =
     503          ! UnknownError.failure |> { (code, result) =>
       parseResponse(code -> "hoge") must equalTo(result)
     }
+
+  def e6 = {
+    import NormalTestEnv._
+    implicit val c = case01
+    Crowd.authenticate("userZZ", "passZZ").toEither must beRight.like {
+      case AuthenticationResult.Failure(_, _) => ok
+      case _ => ko
+    }
+  }
+
+  def e7 = {
+    import NormalTestEnv._
+    implicit val c = case01
+    Crowd.authenticate("user01", "passZZ").toEither must beRight.like {
+      case AuthenticationResult.Failure(_, _) => ok
+      case _ => ko
+    }
+  }
+
+  def e8 = {
+    import NormalTestEnv._
+    implicit val c = case01
+    Crowd.authenticate("user01", "pass01").toEither must beRight.like {
+      case AuthenticationResult.Success(User("user01", _, _, _, _, true)) => ok
+      case _ => ko
+    }
+  }
+
+  def e9 = {
+    import NormalTestEnv._
+    implicit val c = case01
+    Crowd.authenticate("user90", "pass90").toEither must beRight.like {
+      case AuthenticationResult.Failure(_, _) => ok
+      case _ => ko
+    }
+  }
 }
