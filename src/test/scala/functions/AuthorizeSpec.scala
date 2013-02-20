@@ -24,6 +24,7 @@ class AuthorizeSpec extends Specification with DataTables { def is =
       "if authentication failure"                                               ! e9^
       "authorization success case"                                              ! e10^
       "authorization failure case"                                              ! e11^
+      "if connection error"                                                     ! e12^
                                                                                 end
 
   import Authorize._
@@ -154,4 +155,21 @@ class AuthorizeSpec extends Specification with DataTables { def is =
         case _ => ko
       }
     }
+
+  def e12 = {
+    import IrregularTestEnv._
+
+    "when"       | "error"         |
+    Authenticate ! ConnectionError |
+    GetGroupList ! ConnectionError |
+    GetGroup     ! ConnectionError |> { (when, error) =>
+      implicit val c: Case = Set[Func](when)
+      implicit val authorized = Seq("group01")
+      Crowd.authorize("user01", "pass01").toEither must beLeft.like {
+      case ConnectionError => ok
+      case _ => ko
+      }
+    }
+  }
+    
 }

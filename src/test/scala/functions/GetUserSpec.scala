@@ -13,6 +13,7 @@ class GetUserSpec extends Specification with DataTables { def is =
     "getUser"                                                                   ^
       "if user exists"                                                          ! e3^
       "if user doesn't exist"                                                   ! e4^
+      "if connection error"                                                     ! e5^
                                                                                 end
 
   import GetUser._
@@ -65,6 +66,15 @@ class GetUserSpec extends Specification with DataTables { def is =
     implicit val c = case01
     Crowd.getUser("userZZ").toEither must beLeft.like {
       case NotFound(_, _) => ok
+      case _ => ko
+    }
+  }
+
+  def e5 = {
+    import IrregularTestEnv._
+    implicit val c = allError
+    Crowd.getUser("user01").toEither must beLeft.like {
+      case ConnectionError => ok
       case _ => ko
     }
   }

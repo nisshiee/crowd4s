@@ -13,10 +13,12 @@ class GetGroupListSpec extends Specification with DataTables { def is =
     "getDirectGroupList"                                                        ^
       "if user exists"                                                          ! e3^
       "if user doesn't exist, RETURN EMPTY LIST"                                ! e4^
+      "if connection error"                                                     ! e7^
                                                                                 p^
     "getNestedGroupList"                                                        ^
       "if user exists"                                                          ! e5^
       "if user doesn't exist, RETURN EMPTY LIST"                                ! e6^
+      "if connection error"                                                     ! e8^
                                                                                 end
 
   import GetGroupList._
@@ -67,6 +69,24 @@ class GetGroupListSpec extends Specification with DataTables { def is =
     import NormalTestEnv._
     implicit val c = case01
     Crowd.getNestedGroupList("userZZ") must equalTo(Seq().success)
+  }
+
+  def e7 = {
+    import IrregularTestEnv._
+    implicit val c = allError
+    Crowd.getDirectGroupList("user01").toEither must beLeft.like {
+      case ConnectionError => ok
+      case _ => ko
+    }
+  }
+
+  def e8 = {
+    import IrregularTestEnv._
+    implicit val c = allError
+    Crowd.getNestedGroupList("user01").toEither must beLeft.like {
+      case ConnectionError => ok
+      case _ => ko
+    }
   }
 
 }

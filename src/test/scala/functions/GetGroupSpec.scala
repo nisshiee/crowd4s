@@ -18,6 +18,7 @@ class GetGroupSpec extends Specification with DataTables { def is =
     "getGroup"                                                                  ^
       "if group exists"                                                         ! e5^
       "if group doesn't exist"                                                  ! e6^
+      "if connection error"                                                     ! e7^
                                                                                 end
 
   import GetGroup._
@@ -74,6 +75,15 @@ class GetGroupSpec extends Specification with DataTables { def is =
     implicit val c = case01
     Crowd.getGroup("groupZZ").toEither must beLeft.like {
       case NotFound(_, _) => ok
+      case _ => ko
+    }
+  }
+
+  def e7 = {
+    import IrregularTestEnv._
+    implicit val c = allError
+    Crowd.getGroup("group01").toEither must beLeft.like {
+      case ConnectionError => ok
       case _ => ko
     }
   }

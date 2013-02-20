@@ -23,6 +23,7 @@ class AuthenticateSpec extends Specification with DataTables { def is =
       "if password is invalid"                                                  ! e7^
       "if valid authentication"                                                 ! e8^
       "if valid authentication but user is nonactive"                           ! e9^
+      "if connection error"                                                     ! e10^
                                                                                 end
 
   import Authenticate._
@@ -106,6 +107,15 @@ class AuthenticateSpec extends Specification with DataTables { def is =
     implicit val c = case01
     Crowd.authenticate("user90", "pass90").toEither must beRight.like {
       case AuthenticationResult.Failure(_, _) => ok
+      case _ => ko
+    }
+  }
+
+  def e10 = {
+    import IrregularTestEnv._
+    implicit val c = allError
+    Crowd.authenticate("user01", "pass01").toEither must beLeft.like {
+      case ConnectionError => ok
       case _ => ko
     }
   }
