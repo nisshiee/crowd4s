@@ -14,6 +14,11 @@ class GetGroupSpec extends Specification with DataTables { def is =
     "parseResponse"                                                             ^
       "known status code"                                                       ! e3^
       "unknown status code"                                                     ! e4^
+                                                                                p^
+    "getGroup"                                                                  ^
+      "if group exists"                                                         ! e5^
+      "if group doesn't exist"                                                  ! e6^
+      "if connection error"                                                     ! e7^
                                                                                 end
 
   import GetGroup._
@@ -56,4 +61,30 @@ class GetGroupSpec extends Specification with DataTables { def is =
     503          ! UnknownError.failure |> { (code, result) =>
       parseResponse(code -> "hoge") must equalTo(result)
     }
+
+  def e5 = {
+    import NormalTestEnv._
+    implicit val c = case01
+    Crowd.getGroup("group01") must equalTo {
+      Group("group01", "The first group", true).success
+    }
+  }
+
+  def e6 = {
+    import NormalTestEnv._
+    implicit val c = case01
+    Crowd.getGroup("groupZZ").toEither must beLeft.like {
+      case NotFound(_, _) => ok
+      case _ => ko
+    }
+  }
+
+  def e7 = {
+    import IrregularTestEnv._
+    implicit val c = allError
+    Crowd.getGroup("group01").toEither must beLeft.like {
+      case ConnectionError => ok
+      case _ => ko
+    }
+  }
 }
