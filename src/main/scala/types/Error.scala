@@ -2,9 +2,10 @@ package org.nisshiee.crowd4s
 
 sealed trait CrowdError
 
-case object ConnectionError extends CrowdError
-sealed trait RequestError extends CrowdError
+sealed trait ConnectionError extends CrowdError
+case object ConnectionError extends ConnectionError
 
+sealed trait RequestError extends CrowdError
 
 case object Unauthorized extends RequestError
 case object Forbidden extends RequestError
