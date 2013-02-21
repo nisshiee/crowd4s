@@ -11,8 +11,8 @@ trait Authorize {
 
   def authorize
     (username: String, password: Password)
-    (implicit authorizedGroups: Seq[String], conn: CrowdConnection, http: CrowdHttp) =
-      Crowd.authenticate(username, password) flatMap checkAuthenticationResult(authorizedGroups)
+    (implicit authorizedGroup: AuthorizedGroup, conn: CrowdConnection, http: CrowdHttp) =
+      Crowd.authenticate(username, password) flatMap checkAuthenticationResult(authorizedGroup)
 }
 
 object Authorize {
@@ -23,7 +23,7 @@ object Authorize {
   import AuthorizationResult.{ AuthorizationFailure => ArFailure }
 
   def checkAuthenticationResult
-      (authorized: Seq[String])
+      (authorized: AuthorizedGroup)
       (res: AuthenticationResult)
       (implicit conn: CrowdConnection, http: CrowdHttp)
       : Validation[CrowdError, AuthorizationResult] = res match {
@@ -34,11 +34,11 @@ object Authorize {
       }
 
   def searchAuthorizedGroup
-      (authorized: Seq[String], belonged: Seq[String])
+      (authorized: AuthorizedGroup, belonged: Seq[String])
       (user: User)
       (implicit conn: CrowdConnection, http: CrowdHttp)
       : Validation[CrowdError, AuthorizationResult] =
-        authorized.toStream filter (belonged contains _) map checkActive collectFirst {
+        authorized.names.toStream filter (belonged contains _) map checkActive collectFirst {
           case Success(Some(g)) => ArSuccess(user, g).success
           case Failure(e) => e.failure
         } getOrElse ArFailure(user).success

@@ -73,7 +73,7 @@ class AuthorizeSpec extends Specification with DataTables { def is =
     Seq("group90", "group01") ! group01       |> { (authorized, resultGroup) =>
       import NormalTestEnv._
       implicit val c = case01
-      searchAuthorizedGroup(authorized, belonged)(user01) must equalTo {
+      searchAuthorizedGroup(AuthorizedGroup(authorized), belonged)(user01) must equalTo {
         AuthorizationResult.Success(user01, resultGroup).success
       }
     }
@@ -81,7 +81,7 @@ class AuthorizeSpec extends Specification with DataTables { def is =
   def e5 = {
     import NormalTestEnv._
     implicit val c = case01
-    searchAuthorizedGroup(Seq("group90"), belonged)(user01) must equalTo {
+    searchAuthorizedGroup(AuthorizedGroup(Seq("group90")), belonged)(user01) must equalTo {
       AuthorizationResult.AuthorizationFailure(user01).success
     }
   }
@@ -89,7 +89,7 @@ class AuthorizeSpec extends Specification with DataTables { def is =
   def e6 = {
     import NormalTestEnv._
     implicit val c = case01
-    searchAuthorizedGroup(Seq("group04"), belonged)(user01) must equalTo {
+    searchAuthorizedGroup(AuthorizedGroup(Seq("group04")), belonged)(user01) must equalTo {
       AuthorizationResult.AuthorizationFailure(user01).success
     }
   }
@@ -97,7 +97,8 @@ class AuthorizeSpec extends Specification with DataTables { def is =
   def e7 = {
     import NormalTestEnv._
     implicit val c = case01
-    checkAuthenticationResult(Seq("group01"))(AuthenticationResult.Failure("reason", "message")) must equalTo {
+    val authorized = AuthorizedGroup(Seq("group01"))
+    checkAuthenticationResult(authorized)(AuthenticationResult.Failure("reason", "message")) must equalTo {
       AuthorizationResult.AuthenticationFailure(AuthenticationResult.Failure("reason", "message")).success
     }
   }
@@ -105,7 +106,8 @@ class AuthorizeSpec extends Specification with DataTables { def is =
   def e8 = {
     import NormalTestEnv._
     implicit val c = case01
-    checkAuthenticationResult(Seq("group01"))(AuthenticationResult.Success(user01)) must equalTo {
+    val authorized = AuthorizedGroup(Seq("group01"))
+    checkAuthenticationResult(authorized)(AuthenticationResult.Success(user01)) must equalTo {
       AuthorizationResult.Success(user01, group01).success
     }
   }
@@ -116,7 +118,7 @@ class AuthorizeSpec extends Specification with DataTables { def is =
     "userZZ"   !! "passZZ"   |> { (username, password) =>
       import NormalTestEnv._
       implicit val c = case01
-      implicit val authorized = Seq("group01")
+      implicit val authorized = Seq("group01") |> AuthorizedGroup.apply
       Crowd.authorize(username, password).toEither must beRight.like {
         case AuthorizationResult.AuthenticationFailure(_) => ok
         case _ => ko
@@ -135,7 +137,7 @@ class AuthorizeSpec extends Specification with DataTables { def is =
     Seq("group90", "group01") ! group01       |> { (authorized, resultGroup) =>
       import NormalTestEnv._
       implicit val c = case01
-      implicit val a = authorized
+      implicit val a = authorized |> AuthorizedGroup.apply
       Crowd.authorize("user01", "pass01").toEither must beRight.like {
         case AuthorizationResult.Success(user, group) =>
           (user must equalTo(user01)) and (group must equalTo(resultGroup))
@@ -149,7 +151,7 @@ class AuthorizeSpec extends Specification with DataTables { def is =
     Seq("group90")            ! user01       |> { (authorized, resultUser) =>
       import NormalTestEnv._
       implicit val c = case01
-      implicit val a = authorized
+      implicit val a = authorized |> AuthorizedGroup.apply
       Crowd.authorize("user01", "pass01").toEither must beRight.like {
         case AuthorizationResult.AuthorizationFailure(user) => user must equalTo(resultUser)
         case _ => ko
@@ -164,7 +166,7 @@ class AuthorizeSpec extends Specification with DataTables { def is =
     GetGroupList ! ConnectionError |
     GetGroup     ! ConnectionError |> { (when, error) =>
       implicit val c: Case = Set[Func](when)
-      implicit val authorized = Seq("group01")
+      implicit val authorized = Seq("group01") |> AuthorizedGroup.apply
       Crowd.authorize("user01", "pass01").toEither must beLeft.like {
       case ConnectionError => ok
       case _ => ko
