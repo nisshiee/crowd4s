@@ -22,10 +22,10 @@ object Config {
 
   def authorizedGroupOpt: Option[AuthorizedGroup] = for {
     config <- allCatch opt ConfigFactory.load()
-    authorizedGroups <- allCatch opt {
-      config.getStringList("crowd4s.authorizedGroups")
+    authorizedGroup <- allCatch opt {
+      config.getStringList("crowd4s.authorizedGroup")
         .asScala.toSeq |> AuthorizedGroup.apply
     }
-  } yield authorizedGroups
+  } yield authorizedGroup
 
 }

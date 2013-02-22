@@ -27,7 +27,7 @@ crowd4s = {
   urlPrefix = "https://my.crowd.net"
   appname = my-app
   password = password
-  authorizedGroups = [ my-group, my-users ]
+  authorizedGroup = [ my-group, my-users ]
 }
 ```
 
@@ -35,7 +35,7 @@ crowd4s = {
 
 `appname` and `password` are your application's value which input on crowd.
 
-`authorizedGroups` is group name list which you authorize.
+`authorizedGroup` is group name list which you authorize.
 
 
 ### coding
@@ -47,7 +47,7 @@ import org.nisshiee.crowd4s._
 import Config.connection
 
 // import authrozed group list as implicit value
-import Config.authorizedGroups
+import Config.authorizedGroup
 
 // check
 //  - username, password validity
