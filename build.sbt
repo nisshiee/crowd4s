@@ -73,7 +73,7 @@ pomExtra := (
 
 scalacOptions in (Compile, doc) <++= baseDirectory.map {
   bd => Seq("-sourcepath", bd.getAbsolutePath,
-            "-doc-source-url", "https://github.com/nisshiee/crowd4s/blob/master/core€{FILE_PATH}.scala")
+            "-doc-source-url", "https://github.com/nisshiee/crowd4s/blob/master€{FILE_PATH}.scala")
 }
 
 
