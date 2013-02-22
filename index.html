@@ -50,11 +50,14 @@
 
 <h3>scaladoc</h3>
 
-<a href="http://nisshiee.github.com/crowd4s/api/1.1.0/">http://nisshiee.github.com/crowd4s/api/1.1.0/</a>
+<ul>
+  <li><a href="api/1.1.1/">version 1.1.1</a></li>
+  <li><a href="api/1.1.0/">version 1.1.0</a></li>
+</ul>
 
 <h3>sbt dependency</h3>
 
-<pre><code>libraryDependencies += "org.nisshiee" %% "crowd4s" % "1.1.0"
+<pre><code>libraryDependencies += "org.nisshiee" %% "crowd4s" % "1.1.1"
 </code></pre>
 
 <h3>config</h3>
@@ -65,7 +68,7 @@
   urlPrefix = "https://my.crowd.net"
   appname = my-app
   password = password
-  authorizedGroups = [ my-group, my-users ]
+  authorizedGroup = [ my-group, my-users ]
 }
 </code></pre>
 
@@ -83,7 +86,7 @@
 <span class="k">import</span> <span class="nn">Config.connection</span>
 
 <span class="c1">// import authrozed group list as implicit value</span>
-<span class="k">import</span> <span class="nn">Config.authorizedGroups</span>
+<span class="k">import</span> <span class="nn">Config.authorizedGroup</span>
 
 <span class="c1">// check</span>
 <span class="c1">//  - username, password validity</span>
